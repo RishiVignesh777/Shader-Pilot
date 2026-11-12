@@ -43,6 +43,8 @@ export interface AppContextType {
   setIsHudEnabled: (enabled: boolean) => void;
   isControlsOpen: boolean;
   setIsControlsOpen: (open: boolean) => void;
+  isShortcutsOpen: boolean;
+  setIsShortcutsOpen: (open: boolean) => void;
   isInteracting: boolean;
   setIsInteracting: (interacting: boolean) => void;
 

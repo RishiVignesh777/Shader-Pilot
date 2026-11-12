@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { XCircleIcon, TerraformIcon, AdjustmentsIcon, SparklesIcon } from './Icons';
+import { XCircleIcon, TerraformIcon, AdjustmentsIcon, SparklesIcon, KeyboardIcon } from './Icons';
 import { ControlConfig, Modulation, ModulationSource, ModulationTarget, ShipModulation, ShipModulationTarget } from '../types';
 import { generateAudioModulation } from '../services/GeminiService';
 import { v4 as uuidv4 } from 'uuid';
@@ -746,7 +746,7 @@ const TerraformPanel: React.FC = () => {
 };
 
 const ControlsConfigPanel: React.FC = () => {
-    const { controlConfig, handleControlConfigChange } = useAppContext();
+    const { controlConfig, handleControlConfigChange, setIsShortcutsOpen } = useAppContext();
 
     const inversionControls: { key: keyof ControlConfig; label: string; description: string }[] = [
         { key: 'invertForward', label: 'Forward / Backward', description: "Invert W/S keys for camera movement." },
@@ -766,6 +766,22 @@ const ControlsConfigPanel: React.FC = () => {
 
     return (
         <div className="space-y-4">
+            <div className="p-3 bg-cyan-950/40 border border-cyan-500/30 rounded-xl flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                    <KeyboardIcon className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+                    <div>
+                        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Keyboard Navigation Guide</h4>
+                        <p className="text-[11px] text-gray-400">WASD, Arrow Keys, Space, Shift with live key sensor</p>
+                    </div>
+                </div>
+                <button
+                    onClick={() => setIsShortcutsOpen(true)}
+                    className="px-3 py-1.5 bg-cyan-600/30 hover:bg-cyan-500/40 border border-cyan-500/50 text-cyan-200 text-xs font-semibold rounded-lg transition-colors shadow-sm whitespace-nowrap"
+                >
+                    Open Overlay (?)
+                </button>
+            </div>
+
             <div>
                 <h3 className="text-sm font-semibold text-gray-400 px-1 mb-2">Inversions</h3>
                 <div className="space-y-2">
@@ -1089,6 +1105,7 @@ export const ControlsPanel: React.FC = () => {
   const { 
     isControlsOpen, 
     setIsControlsOpen,
+    setIsShortcutsOpen,
     cameraControlsEnabled,
     EDITMODE,
     sessionSource,
@@ -1286,7 +1303,15 @@ export const ControlsPanel: React.FC = () => {
                   by <a href="https://x.com/pitaru" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">@pitaru</a>
               </span>
           </h2>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <button 
+                onClick={() => setIsShortcutsOpen(true)}
+                className="text-gray-400 hover:text-cyan-400 transition-colors p-1.5 rounded-full hover:bg-gray-700/50"
+                aria-label="View Keyboard Shortcuts"
+                title="View Keyboard Shortcuts (?)"
+            >
+                <KeyboardIcon className="w-5 h-5" />
+            </button>
             <button 
                 onClick={() => setIsControlsOpen(false)}
                 className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-700/50"

@@ -121,3 +121,10 @@ export const TerraformIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =>
     <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-45 12 12)" />
   </SvgIcon>
 );
+
+export const KeyboardIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <SvgIcon {...props} strokeWidth={1.5}>
+    <rect x="2" y="4" width="20" height="16" rx="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10" />
+  </SvgIcon>
+);

@@ -11,10 +11,11 @@ import { ControlsPanel } from './components/ControlsPanel';
 import { DpadControls } from './components/DpadControls';
 import { Hud } from './components/Hud';
 import { ShipOverlay } from './components/ShipOverlay';
+import { KeyboardShortcutsOverlay } from './components/KeyboardShortcutsOverlay';
 import { AppProvider, useAppContext } from './context/AppContext';
 import { useAppStoreComplete } from './hooks/useAppStore';
-import { GearIcon, SpeakerWaveIcon, SpeakerXMarkIcon, RocketLaunchIcon } from './components/Icons';
-import { SHOW_SETTINGS_BUTTON, SHOW_SHARE_BUTTON, SHOW_HUD_BUTTON, SHOW_MUTE_BUTTON } from './config';
+import { GearIcon, SpeakerWaveIcon, SpeakerXMarkIcon, RocketLaunchIcon, KeyboardIcon } from './components/Icons';
+import { SHOW_SETTINGS_BUTTON, SHOW_SHARE_BUTTON, SHOW_HUD_BUTTON, SHOW_MUTE_BUTTON, SHOW_SHORTCUTS_BUTTON } from './config';
 
 // Optimization: Define static constant outside component to avoid recreation every render
 const NAV_KEYS = ['w', 'a', 's', 'd', ' ', 'shift', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
@@ -44,9 +45,24 @@ const AppContent: React.FC = () => {
         handleFileChange,
         soundConfig,
         handleSoundConfigChange,
+        isShortcutsOpen,
+        setIsShortcutsOpen,
     } = useAppContext();
 
     const [isLinkCopied, setIsLinkCopied] = useState(false);
+
+    // Global listener for shortcut overlay toggle (e.g. ? or / key)
+    React.useEffect(() => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            if ((e.target as HTMLElement).matches('input, textarea, select')) return;
+            if (e.key === '?' || (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey)) {
+                e.preventDefault();
+                setIsShortcutsOpen(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, []);
 
     const handleShareClick = useCallback(() => {
         const params: Record<string, string | number> = {
@@ -171,6 +187,7 @@ const AppContent: React.FC = () => {
             <Hud />
             
             <ControlsPanel />
+            <KeyboardShortcutsOverlay isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
             {cameraControlsEnabled && <DpadControls />}
             
             {/* Top Left Buttons Group: HD & Ship */}
@@ -220,6 +237,18 @@ const AppContent: React.FC = () => {
                         title={`Sound: ${!soundConfig.enabled ? 'Off' : 'On'}`}
                     >
                         {getVolumeIcon()}
+                    </button>
+                )}
+
+                {SHOW_SHORTCUTS_BUTTON && (
+                    <button
+                        onClick={() => setIsShortcutsOpen(prev => !prev)}
+                        className={`w-12 h-12 flex items-center justify-center rounded-full transition-all transform hover:scale-110 shadow-lg border backdrop-blur-sm
+                                    ${isShortcutsOpen ? 'bg-cyan-400 text-black border-cyan-300' : 'bg-gray-500/30 text-white border-white/20 hover:bg-white/20'}`}
+                        aria-label="Keyboard Shortcuts"
+                        title="Flight Controls & Keyboard Shortcuts (?)"
+                    >
+                        <KeyboardIcon className="w-6 h-6" />
                     </button>
                 )}
 
